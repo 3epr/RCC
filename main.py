@@ -1,16 +1,30 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from pynput import mouse
+import json
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def on_move(x, y):
+    print(f'{x} : {y}')
+    return {
+        'action': 'move',
+        'X': x,
+        'Y': y
+    }
 
+def on_click(x, y, button, pressed):
+    ps = "p" if pressed else 'r'
+    print()
+    return {
+        'action': 'cli',
+        'X': x,
+        'Y': y,
+        'button': button,
+        'ps': ps
+    }
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+with mouse.Listener(on_move=on_move,
+                    on_click=on_click, suppress=True) as listener:
+    listener.join()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+listener = mouse.Listener(on_move=on_move,
+                    on_click=on_click, suppress=True)
+listener.start()
