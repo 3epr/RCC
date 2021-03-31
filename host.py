@@ -21,7 +21,7 @@ while not q:
         if addr not in clients:
             clients.append(addr)
         for client in clients:
-            if addr != client:
+            if addr == client:
                 s.sendto(data, client)
     except:
         print('[ Server Stopped ]')

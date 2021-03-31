@@ -1,4 +1,4 @@
-import socket, threading, json
+import socket, threading, pickle
 from pynput.mouse import Button, Controller
 from pynput import mouse
 
@@ -14,7 +14,7 @@ def on_move(x, y):
         'X': x,
         'Y': y
     }
-    s.sendto(json.dumps(data), server)
+    s.sendto(pickle.dumps(data), server)
 
 def on_click(x, y, button, pressed):
     ps = "p" if pressed else 'r'
@@ -23,10 +23,10 @@ def on_click(x, y, button, pressed):
         'action': 'cli',
         'X': x,
         'Y': y,
-        'button': button,
+        'button': str(button),
         'ps': ps
     }
-    s.sendto(json.dumps(data), server)
+    s.sendto(pickle.dumps(data), server)
 
 
 def receving(name, sock):
@@ -34,9 +34,10 @@ def receving(name, sock):
         try:
             while True:
                 data, addr = sock.recvfrom(1024)
-                data = json.loads(data)
-                if data[action] == 'move':
-                    pass
+                data = pickle.loads(data)
+                if data['action'] == 'move':
+                    print(data)
+                    m.position(data['X'], data['Y'])
                 else:
                     pass
         except:
@@ -53,25 +54,27 @@ s.setblocking(0)
 
 alias = input("Namer: ")
 
-rT = threading.Thread(target=receving, args=("RecvThread", s))
-rT.start()
+if alias == 6700:
+    rT = threading.Thread(target=receving, args=("RecvThread", s))
+    rT.start()
+else:
+    while shutdown == False:
+        if join == False:
+            s.sendto(("[" + alias + "] :: connected").encode("utf-8"), server)
+            join = True
+        else:
+            try:
+                with mouse.Listener(on_move=on_move,
+                                           on_click=on_click) as listener:
+                    listener.join()
 
-while shutdown == False:
-    if join == False:
-        s.sendto(("[" + alias + "] :: connected").encode("utf-8"), server)
-        join = True
-    else:
-        try:
-            with mouse.Listener(on_move=on_move,
-                                       on_click=on_click, suppress=True) as listener:
-                listener.join()
+                listener = mouse.Listener(on_move=on_move,
+                                                 on_click=on_click)
+                listener.start()
+            except:
+                s.sendto(("[" + alias + "] :: disconnected").encode("utf-8"), server)
+                shutdown = True
 
-            listener = mouse.Listener(on_move=on_move,
-                                             on_click=on_click, suppress=True)
-            listener.start()
-        except:
-            s.sendto(("[" + alias + "] :: disconnected").encode("utf-8"), server)
-            shutdown = True
-
-rT.join()
+if alias == 6700:
+    rT.join()
 s.close()
