@@ -54,27 +54,24 @@ s.setblocking(0)
 
 alias = input("Namer: ")
 
+if join == False:
+    s.sendto(("[" + alias + "] :: connected").encode("utf-8"), server)
+    join = True
+
 if alias == 6700:
     rT = threading.Thread(target=receving, args=("RecvThread", s))
     rT.start()
+    rT.join()
 else:
     while shutdown == False:
-        if join == False:
-            s.sendto(("[" + alias + "] :: connected").encode("utf-8"), server)
-            join = True
-        else:
-            try:
-                with mouse.Listener(on_move=on_move,
-                                           on_click=on_click) as listener:
-                    listener.join()
+        try:
+            with mouse.Listener(on_move=on_move, on_click=on_click) as listener:
+                listener.join()
 
-                listener = mouse.Listener(on_move=on_move,
-                                                 on_click=on_click)
+                listener = mouse.Listener(on_move=on_move, on_click=on_click)
                 listener.start()
-            except:
-                s.sendto(("[" + alias + "] :: disconnected").encode("utf-8"), server)
-                shutdown = True
+        except:
+            s.sendto(("[" + alias + "] :: disconnected").encode("utf-8"), server)
+            shutdown = True
 
-if alias == 6700:
-    rT.join()
 s.close()
