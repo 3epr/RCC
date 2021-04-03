@@ -35,8 +35,8 @@ def receving(name, sock):
             while True:
                 data, addr = sock.recvfrom(1024)
                 data = pickle.loads(data)
+                print(data)
                 if data['action'] == 'move':
-                    print(data)
                     m.position(data['X'], data['Y'])
                 else:
                     if data['ps'] == 'p':
@@ -61,7 +61,7 @@ if join == False:
     s.sendto(("[" + alias + "] :: connected").encode("utf-8"), server)
     join = True
 
-if alias == 6700:
+if alias == '6700':
     rT = threading.Thread(target=receving, args=("RecvThread", s))
     rT.start()
     rT.join()
