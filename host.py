@@ -20,6 +20,7 @@ while not q:
 
         if addr not in clients:
             clients.append(addr)
+            print('connect')
         for client in clients:
             if addr != client:
                 s.sendto(data, client)
