@@ -39,7 +39,10 @@ def receving(name, sock):
                     print(data)
                     m.position(data['X'], data['Y'])
                 else:
-                    pass
+                    if data['ps'] == 'p':
+                        m.press(data['button'])
+                    else:
+                        m.release(data['button'])
         except:
             pass
 
