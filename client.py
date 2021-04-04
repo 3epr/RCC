@@ -3,6 +3,7 @@ from pynput.mouse import Listener, Controller, Button
 
 shutdown = False
 join = False
+k = 3
 
 def on_move(x, y):
     print(f'{x} : {y}')
@@ -35,7 +36,7 @@ def receving(name, sock):
                 data = pickle.loads(data)
                 print(data)
                 if data['action'] == 'move':
-                    mouse.position(data['X'], data['Y'])
+                    mouse.position = (data['X']*k, data['Y']*k)
                 else:
                     if data['ps'] == 'p':
                         mouse.press(data['button'])
