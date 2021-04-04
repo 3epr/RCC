@@ -1,8 +1,5 @@
 import socket
 
-
-
-
 host = socket.gethostbyname(socket.gethostname())
 port = 9090
 
@@ -20,7 +17,8 @@ while not q:
 
         if addr not in clients:
             clients.append(addr)
-            print('connect')
+            print(f'connect {addr}')
+            print(clients)
         for client in clients:
             if addr != client:
                 s.sendto(data, client)
