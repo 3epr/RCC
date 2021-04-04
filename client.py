@@ -1,8 +1,5 @@
 import socket, threading, pickle
-from pynput.mouse import Button, Controller
-from pynput import mouse
-
-m = Controller()
+from pynput.mouse import Listener, Controller, Button
 
 shutdown = False
 join = False
@@ -23,13 +20,14 @@ def on_click(x, y, button, pressed):
         'action': 'cli',
         'X': x,
         'Y': y,
-        'button': str(button),
+        'button': button,
         'ps': ps
     }
     s.sendto(pickle.dumps(data), server)
 
 
 def receving(name, sock):
+    mouse = Controller()
     while not shutdown:
         try:
             while True:
@@ -37,12 +35,12 @@ def receving(name, sock):
                 data = pickle.loads(data)
                 print(data)
                 if data['action'] == 'move':
-                    m.position(data['X'], data['Y'])
+                    mouse.position(data['X'], data['Y'])
                 else:
                     if data['ps'] == 'p':
-                        m.press(data['button'])
+                        mouse.press(data['button'])
                     else:
-                        m.release(data['button'])
+                        mouse.release(data['button'])
         except:
             pass
 
@@ -68,10 +66,10 @@ if alias == '6700':
 else:
     while shutdown == False:
         try:
-            with mouse.Listener(on_move=on_move, on_click=on_click) as listener:
+            with Listener(on_move=on_move, on_click=on_click) as listener:
                 listener.join()
 
-                listener = mouse.Listener(on_move=on_move, on_click=on_click)
+                listener = Listener(on_move=on_move, on_click=on_click)
                 listener.start()
         except:
             s.sendto(("[" + alias + "] :: disconnected").encode("utf-8"), server)
